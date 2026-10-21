@@ -24,7 +24,7 @@ class ControlPlaneModulesPluginTest {
     @BeforeEach
     void writeBuildFiles() throws IOException {
         Files.writeString(projectDir.resolve("settings.gradle"),
-                "plugins { id 'io.github.nanofaas.control-plane-modules' }\n");
+                "plugins { id 'io.github.nanofaas.build' }\n");
         Files.writeString(projectDir.resolve("build.gradle"),
                 "tasks.register('printSelection') { doLast { println gradle.ext.nanofaasSelectedControlPlaneModules } }\n"
                         + "tasks.register('mutateSelection') { doLast { gradle.ext.nanofaasSelectedControlPlaneModules.add('unexpected') } }\n");
@@ -249,7 +249,7 @@ class ControlPlaneModulesPluginTest {
     @Test
     void composesSelectedModuleFragmentsIntoControlPlaneOpenApi() throws IOException {
         Files.writeString(projectDir.resolve("settings.gradle"),
-                "plugins { id 'io.github.nanofaas.control-plane-modules' }\n"
+                "plugins { id 'io.github.nanofaas.build' }\n"
                         + "include('control-plane'); project(':control-plane').projectDir = file('control-plane')\n");
 
         Files.createDirectories(projectDir.resolve("openapi"));

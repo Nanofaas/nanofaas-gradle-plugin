@@ -7,12 +7,12 @@ pluginManagement {
     def pluginProperties = new Properties()
     file('../../gradle.properties').withInputStream { pluginProperties.load(it) }
     plugins {
-        id 'io.github.nanofaas.control-plane-modules' version pluginProperties.getProperty('version')
+        id 'io.github.nanofaas.build' version pluginProperties.getProperty('version')
     }
 }
 
 plugins {
-    id 'io.github.nanofaas.control-plane-modules'
+    id 'io.github.nanofaas.build'
 }
 
 rootProject.name = 'nanofaas-plugin-smoke'

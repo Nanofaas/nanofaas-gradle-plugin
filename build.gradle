@@ -34,7 +34,7 @@ gradlePlugin {
     vcsUrl = 'https://github.com/Nanofaas/nanofaas-gradle-plugin.git'
     plugins {
         controlPlaneModules {
-            id = 'io.github.nanofaas.control-plane-modules'
+            id = 'io.github.nanofaas.build'
             implementationClass = 'it.unimib.datai.nanofaas.gradle.ControlPlaneModulesPlugin'
             displayName = 'NanoFaaS build plugin'
             description = 'Select and validate NanoFaaS control-plane modules, compose OpenAPI and build distributions from YAML recipes.'

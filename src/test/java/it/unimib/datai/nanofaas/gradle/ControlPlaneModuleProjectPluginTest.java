@@ -19,7 +19,7 @@ class ControlPlaneModuleProjectPluginTest {
     @Test
     void addsStrongAsImplementationAndWeakAsCompileOnlyWithoutTestDependencies() throws IOException {
         Files.writeString(projectDir.resolve("settings.gradle"),
-                "plugins { id 'io.github.nanofaas.control-plane-modules' }\n");
+                "plugins { id 'io.github.nanofaas.build' }\n");
         Files.writeString(projectDir.resolve("build.gradle"), "");
         writeModule("strong", "false", "", "", "", "");
         writeModule("weak", "false", "", "", "", "");

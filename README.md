@@ -5,19 +5,22 @@ distributions. It discovers control-plane modules, checks their requirements and
 conflicts, composes OpenAPI documents, and validates and assembles YAML recipes.
 
 - Repository: `Nanofaas/nanofaas-gradle-plugin`
-- Plugin ID: `io.github.nanofaas.control-plane-modules`
+- Plugin ID: `io.github.nanofaas.build`
 - Implementation artifact: `io.github.nanofaas:nanofaas-gradle-plugin`
-- Initial release: `0.1.0`
+- Release: `0.1.1`
 - Requirements: **Java 25**, **Gradle 9.7.1** (the included wrapper).
 - License: [MIT](LICENSE).
 
 The Java packages retain `it.unimib.datai.nanofaas.gradle` from the original implementation.
 The published plugin ID replaces the unpublished, repository-local
 `it.unimib.datai.nanofaas.control-plane-modules` ID.
+Version `0.1.0` was submitted under `io.github.nanofaas.control-plane-modules`;
+from `0.1.1`, use `io.github.nanofaas.build`. The Maven implementation coordinates
+remain unchanged. The new ID requires its own Portal approval.
 
 ## Apply the plugin
 
-After version `0.1.0` has been published to the Gradle Plugin Portal, apply it in
+After version `0.1.1` has been published to the Gradle Plugin Portal, apply it in
 **`settings.gradle`**, before the project includes:
 
 ```groovy
@@ -29,7 +32,7 @@ pluginManagement {
 }
 
 plugins {
-    id 'io.github.nanofaas.control-plane-modules' version '0.1.0'
+    id 'io.github.nanofaas.build' version '0.1.1'
 }
 ```
 
@@ -58,7 +61,7 @@ Validating a recipe and building a JVM artifact need no Docker daemon or GraalVM
 Create `recipes/tutorial.yaml`:
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/Nanofaas/nanofaas-gradle-plugin/v0.1.0/src/main/resources/recipes/recipe-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Nanofaas/nanofaas-gradle-plugin/v0.1.1/src/main/resources/recipes/recipe-v2.schema.json
 schemaVersion: 2
 name: tutorial
 controlPlane:
@@ -215,8 +218,8 @@ For a release, set `version` in `gradle.properties`, commit and push the changes
 then push a matching version tag:
 
 ```bash
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 The workflow rejects a tag whose version differs from `gradle.properties`, checks
@@ -227,7 +230,7 @@ The [Portal publishing guide](https://plugins.gradle.org/docs/publish-plugin)
 explains initial manual approval and namespace ownership. A successful upload
 may still be awaiting approval before users can resolve the first release.
 
-For the initial extraction, publish and wait for `0.1.0` to become available
+For the initial extraction, publish and wait for `0.1.1` to become available
 **before merging the NanoFaaS consumer migration**. Until then use the explicit
 local checkout override above. Creating the workflow does not publish a release
 or configure the secrets automatically.

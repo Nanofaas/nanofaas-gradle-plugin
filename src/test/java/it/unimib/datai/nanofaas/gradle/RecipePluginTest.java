@@ -35,7 +35,7 @@ class RecipePluginTest {
     @BeforeEach
     void writeFixture() throws IOException {
         write("settings.gradle", """
-                plugins { id 'io.github.nanofaas.control-plane-modules' }
+                plugins { id 'io.github.nanofaas.build' }
                 include ':control-plane', ':sdks:java', ':sdks:java-lite'
                 include ':functions:java:word-stats', ':functions:java:word-stats-lite', ':functions:java:jvm-only', ':services:java:warm-echo'
                 project(':control-plane').projectDir = file('platform/control-plane')
