@@ -1,0 +1,54 @@
+plugins {
+    id 'java-gradle-plugin'
+    id 'com.gradle.plugin-publish' version '2.2.1'
+}
+
+apply from: file('gradle/dead-code.gradle')
+
+group = 'io.github.nanofaas'
+description = 'Compose NanoFaaS modules, validate distribution recipes and assemble their artifacts.'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+    withSourcesJar()
+    withJavadocJar()
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.yaml:snakeyaml:2.7'
+    implementation 'com.networknt:json-schema-validator:2.0.7'
+    testImplementation gradleTestKit()
+    testImplementation 'org.assertj:assertj-core:3.27.7'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.14.4'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher:1.14.4'
+}
+
+gradlePlugin {
+    website = 'https://github.com/Nanofaas/nanofaas-gradle-plugin'
+    vcsUrl = 'https://github.com/Nanofaas/nanofaas-gradle-plugin.git'
+    plugins {
+        controlPlaneModules {
+            id = 'io.github.nanofaas.control-plane-modules'
+            implementationClass = 'it.unimib.datai.nanofaas.gradle.ControlPlaneModulesPlugin'
+            displayName = 'NanoFaaS build plugin'
+            description = 'Select and validate NanoFaaS control-plane modules, compose OpenAPI and build distributions from YAML recipes.'
+            tags.set(['nanofaas', 'faas', 'modules', 'openapi', 'recipes'])
+            compatibility(it) {
+                features {
+                    configurationCache = false
+                    isolatedProjects = false
+                }
+            }
+        }
+    }
+}
+
+tasks.withType(Test).configureEach {
+    useJUnitPlatform()
+}
