@@ -497,6 +497,22 @@ class RecipePluginTest {
     }
 
     @Test
+    void rustFunctionsResolveSharedDockerfileBeforeBuilding() throws IOException {
+        Path shared = projectDir.resolve("functions/rust/shared/Dockerfile");
+        Files.createDirectories(shared.getParent());
+        Path dockerfile = projectDir.resolve("functions/rust/word-stats/Dockerfile");
+        Files.move(dockerfile, shared);
+        Files.createSymbolicLink(dockerfile, Path.of("../shared/Dockerfile"));
+        recipe(V2_HEADER + CP_JVM + "functions: [{name: word-stats, sdk: rust, container: {image: ws-rust}}]\n");
+
+        run("assembleRecipe", "-Precipe=recipe.yaml", docker());
+
+        assertThat(dockerCalls().stream().filter(call -> call.getFirst().equals("build")).toList())
+                .containsExactly(List.of("build", "-f", shared.toRealPath().toString(),
+                        "-t", "nanofaas/demo/ws-rust:local", projectDir.toRealPath().toString()));
+    }
+
+    @Test
     void rustFunctionsBuildFromTheRepositoryRoot() throws IOException {
         recipe(V2_HEADER + CP_JVM + """
                 functions: [{name: word-stats, sdk: rust, container: {image: ws-rust}}]
@@ -743,7 +759,7 @@ class RecipePluginTest {
                 registry: {repository: registry.example:5000/team, tag: "1.0.0"}
                 controlPlane:
                   modules: [build-metadata]
-                  build: {mode: native, variant: native-o3-g1, native: {optimization: 3.0, gc: G1, monitoring: [jvmstat]}}
+                  build: {mode: native, variant: native-o3-g1, native: {optimization: 3.0, gc: G1, monitoring: [jvmstat], maxHeap: 64m}}
                   container: {image: control-plane}
                 services: [{name: watchdog, sdk: dockerfile, container: {image: watchdog}}]
                 """);
@@ -758,7 +774,7 @@ class RecipePluginTest {
         assertThat(controlPlane.get("variant").asText()).isEqualTo("native-o3-g1");
         assertThat(controlPlane.get("optimization").asText()).isEqualTo("3");
         assertThat(controlPlane.get("native").toString())
-                .isEqualTo("{\"optimization\":\"3\",\"gc\":\"G1\",\"monitoring\":[\"jvmstat\",\"jfr\"],\"builder\":\"host\"}");
+                .isEqualTo("{\"optimization\":\"3\",\"gc\":\"G1\",\"monitoring\":[\"jvmstat\",\"jfr\"],\"builder\":\"host\",\"maxHeap\":\"64m\"}");
         assertThat(report.get("components").get(1).get("kind").asText()).isEqualTo("service");
         String reference = "registry.example:5000/team/control-plane:1.0.0";
         assertThat(image(report, reference).get("id").asText()).isEqualTo(imageIdOf(reference));
@@ -1001,10 +1017,10 @@ class RecipePluginTest {
     void onlyHostBuiltNativeImagesNeedALinuxHost() {
         RecipeTasks.Target host = new RecipeTasks.Target("controlPlane", "control-plane", "control-plane", "java", "native",
                 ":control-plane:nativeCompile", null, null, "control-plane/", "img", null, null,
-                new RecipeBuildProperties.NativeOptions("3", "serial", List.of(), "host", null));
+                new RecipeBuildProperties.NativeOptions("3", "serial", List.of(), "host", null, null));
         RecipeTasks.Target container = new RecipeTasks.Target("controlPlane", "control-plane", "control-plane", "java",
                 "native", ":control-plane:nativeCompile", null, null, "control-plane/", "img", null, null,
-                new RecipeBuildProperties.NativeOptions("3", "serial", List.of(), "container", "community"));
+                new RecipeBuildProperties.NativeOptions("3", "serial", List.of(), "container", "community", null));
 
         assertThat(RecipeTasks.hostProblem("Mac OS X", host, 2)).contains("Linux host")
                 .contains("use build.builder: container");
