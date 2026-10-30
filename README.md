@@ -236,3 +236,16 @@ recipes with `build.native.maxHeap` and Rust functions that share a Dockerfile
 through symbolic links, and `0.1.1` supports neither. Until then use the
 explicit local checkout override above. Creating the workflow does not publish a
 release or configure the secrets automatically.
+
+### Interpreter metadata (development version 0.1.3-SNAPSHOT)
+
+JVM recipe identities distinguish `interpreted` (`-Xint`), `c1` and `c2`.
+The last `-Xint`/`-Xmixed`/`-Xcomp` selects execution mode; interpretation takes
+precedence over `TieredStopAtLevel`, whose last value selects C1 versus full
+tiering when JIT is enabled. These values describe configuration, not proof
+that a specific application method reached C2.
+
+Use NanoFaaS's existing `-PnanofaasGradlePluginDir=/path/to/this/checkout`
+override to verify the development version. Published 0.1.2 is unchanged.
+Consumers validating recipe metadata must recognize `interpreted` before
+adopting this version. Do not rewrite reports produced by older releases.

@@ -160,17 +160,23 @@ final class RecipeBuildProperties {
     }
 
     /**
-     * nanolab's rule: c1 when the effective options stop tiering at level 1. The control plane's fixed flags and its
+     * Interpretation takes precedence over tiering. The control plane's fixed flags and its
      * default tuning never set TieredStopAtLevel, so jvm.args alone decides; the JVM keeps the last value.
      */
     static String jvmTier(List<String> args) {
         String level = null;
+        boolean interpreted = false;
         for (String arg : args == null ? List.<String>of() : args) {
+            if (arg.equals("-Xint")) {
+                interpreted = true;
+            } else if (arg.equals("-Xmixed") || arg.equals("-Xcomp")) {
+                interpreted = false;
+            }
             if (arg.startsWith("-XX:TieredStopAtLevel=")) {
                 level = arg.substring("-XX:TieredStopAtLevel=".length());
             }
         }
-        return "1".equals(level) ? "c1" : "c2";
+        return interpreted ? "interpreted" : ("1".equals(level) ? "c1" : "c2");
     }
 
     static void rejectOwnedFlags(Path source, Set<String> projectProperties) {

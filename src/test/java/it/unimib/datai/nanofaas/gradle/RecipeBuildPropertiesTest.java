@@ -119,6 +119,16 @@ class RecipeBuildPropertiesTest {
     }
 
     @Test
+    void interpreterModeFollowsTheLastExecutionMode() {
+        assertThat(RecipeBuildProperties.jvmTier(List.of("-Xint"))).isEqualTo("interpreted");
+        assertThat(RecipeBuildProperties.jvmTier(List.of("-Xint", "-XX:TieredStopAtLevel=1")))
+                .isEqualTo("interpreted");
+        assertThat(RecipeBuildProperties.jvmTier(List.of("-Xint", "-Xmixed"))).isEqualTo("c2");
+        assertThat(RecipeBuildProperties.jvmTier(List.of("-Xmixed", "-Xint"))).isEqualTo("interpreted");
+        assertThat(RecipeBuildProperties.jvmTier(List.of("-Xint", "-Xcomp"))).isEqualTo("c2");
+    }
+
+    @Test
     void jvmTierFollowsTheLastTieredStopAtLevel() {
         assertThat(RecipeBuildProperties.jvmTier(null)).isEqualTo("c2");
         assertThat(RecipeBuildProperties.jvmTier(List.of("-XX:TieredStopAtLevel=1"))).isEqualTo("c1");
