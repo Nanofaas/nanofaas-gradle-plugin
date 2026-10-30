@@ -864,7 +864,7 @@ class RecipePluginTest {
     @Test
     void jvmTierReachesBuildMetadataAndTheReport() throws IOException {
         writeModule("build-metadata", "");
-        for (String[] tier : new String[][] {{"-XX:TieredStopAtLevel=1", "c1"}, {"-Xmx128m", "c2"}}) {
+        for (String[] tier : new String[][] {{"-XX:TieredStopAtLevel=1", "c1"}, {"-Xmx128m", "c2"}, {"-Xint", "interpreted"}}) {
             recipe(V2_HEADER + "controlPlane: {modules: [build-metadata], build: {mode: jvm, variant: jvm-" + tier[1]
                     + "}, jvm: {args: ['" + tier[0] + "']}}\n");
 

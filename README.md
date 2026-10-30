@@ -7,7 +7,7 @@ conflicts, composes OpenAPI documents, and validates and assembles YAML recipes.
 - Repository: `Nanofaas/nanofaas-gradle-plugin`
 - Plugin ID: `io.github.nanofaas.build`
 - Implementation artifact: `io.github.nanofaas:nanofaas-gradle-plugin`
-- Release: `0.1.2`
+- Release: `0.1.3`
 - Requirements: **Java 25**, **Gradle 9.7.1** (the included wrapper).
 - License: [MIT](LICENSE).
 
@@ -20,7 +20,7 @@ remain unchanged. The new ID requires its own Portal approval.
 
 ## Apply the plugin
 
-After version `0.1.2` has been published to the Gradle Plugin Portal, apply it in
+Apply version `0.1.3` from the Gradle Plugin Portal in
 **`settings.gradle`**, before the project includes:
 
 ```groovy
@@ -32,7 +32,7 @@ pluginManagement {
 }
 
 plugins {
-    id 'io.github.nanofaas.build' version '0.1.2'
+    id 'io.github.nanofaas.build' version '0.1.3'
 }
 ```
 
@@ -61,7 +61,7 @@ Validating a recipe and building a JVM artifact need no Docker daemon or GraalVM
 Create `recipes/tutorial.yaml`:
 
 ```yaml
-# yaml-language-server: $schema=https://raw.githubusercontent.com/Nanofaas/nanofaas-gradle-plugin/v0.1.2/src/main/resources/recipes/recipe-v2.schema.json
+# yaml-language-server: $schema=https://raw.githubusercontent.com/Nanofaas/nanofaas-gradle-plugin/v0.1.3/src/main/resources/recipes/recipe-v2.schema.json
 schemaVersion: 2
 name: tutorial
 controlPlane:
@@ -218,8 +218,8 @@ For a release, set `version` in `gradle.properties`, commit and push the changes
 then push a matching version tag:
 
 ```bash
-git tag v0.1.2
-git push origin v0.1.2
+git tag v0.1.3
+git push origin v0.1.3
 ```
 
 The workflow rejects a tag whose version differs from `gradle.properties`, checks
@@ -236,3 +236,16 @@ recipes with `build.native.maxHeap` and Rust functions that share a Dockerfile
 through symbolic links, and `0.1.1` supports neither. Until then use the
 explicit local checkout override above. Creating the workflow does not publish a
 release or configure the secrets automatically.
+
+### Interpreter metadata (0.1.3)
+
+JVM recipe identities distinguish `interpreted` (`-Xint`), `c1` and `c2`.
+The last `-Xint`/`-Xmixed`/`-Xcomp` selects execution mode; interpretation takes
+precedence over `TieredStopAtLevel`, whose last value selects C1 versus full
+tiering when JIT is enabled. These values describe configuration, not proof
+that a specific application method reached C2.
+
+Use NanoFaaS's existing `-PnanofaasGradlePluginDir=/path/to/this/checkout`
+override to verify a local checkout. Reports produced by 0.1.2 are unchanged.
+Consumers validating recipe metadata must recognize `interpreted` before
+adopting this version. Do not rewrite reports produced by older releases.
